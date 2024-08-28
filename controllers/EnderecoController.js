@@ -1,5 +1,7 @@
 const { json } = require('sequelize');
 const {Endereco} = require('../models');
+const axios = require('axios');
+
 
 //Criar Endereço
 exports.createEndereco = async (req, res) => {
@@ -95,3 +97,42 @@ exports.deleteEndereco = async (req, res) => {
         res.status(500).json({error: 'Erro ao deletar endereço', details: error.message});
     }
 }
+
+
+// Consultar CEP
+exports.consultarCep = async (req, res) => {
+    try {
+        const { cep } = req.params;
+        const cepRegex = /^[0-9]{5}-?[0-9]{3}$/;
+
+        if (!cepRegex.test(cep)) {
+            return res.status(400).json({ error: "CEP inválido. Formato: XXXXX-XXX" });
+        }
+
+        const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
+
+        if (response.data.erro) {
+            return res.status(404).json({ error: "CEP não encontrado." });
+        }
+
+        const { logradouro, bairro, localidade, uf, ibge, complemento } = response.data;
+
+        const novoEndereco = await Endereco.create({
+            Cep: response.data.cep,
+            Logradouro: response.data.logradouro,
+            Numero: 0,
+            Complemento: response.data.complemento,
+            Bairro: response.data.bairro,
+            Cidade: response.data.localidade,
+            Estado: response.data.uf,
+            MunicipioIBGE: response.data.ibge
+
+        })
+
+        res.status(201).json(response.novoEndereco);
+    } catch (error) {
+        res.status(500).json({ error: 'Erro ao consultar CEP e criar endereço', details: error.message });
+    }
+}
+
+
