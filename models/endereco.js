@@ -2,7 +2,7 @@ const { Model, DataTypes } = require('sequelize');
 
 class Endereco extends Model {
   static associate(models) {
-    // Defina associações aqui se houver
+    
   }
 }
 

@@ -1,10 +1,10 @@
 const express = require("express");
-const routes = require("./routes"); // Verifique se o caminho está correto
+const routes = require("./routes"); 
 
 const app = express();
 
 app.use(express.json());
-app.use('/api', routes); // Corrigido de '/api,' para '/api'
+app.use('/api', routes); 
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
