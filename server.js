@@ -1,10 +1,16 @@
 const express = require("express");
-const routes = require("./routes"); 
+const cors = require("cors");  // Importe o pacote cors
+const routes = require("./routes");
 
 const app = express();
 
+// Configuração do middleware CORS
+app.use(cors());  // Permite todas as origens por padrão
+
 app.use(express.json());
-app.use('/api', routes); 
+
+// Suas rotas
+app.use('/api', routes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
